@@ -3,25 +3,17 @@ sequenceDiagram
     participant browser
     participant server
 
-    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/spa
     activate server
-    server-->>browser: 302 Request - Refresh page
-    deactivate server
-
-    Note right of browser: The data is stored in the body of the POST request. The server adds this to the list.
-
-    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/notes
-
-    activate server
-    server-->>browser: the HTML document
+    server-->>browser: HTML document
     deactivate server
 
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.css
     activate server
-    server-->>browser: the CSS file
+    server-->>browser: the css file
     deactivate server
 
-    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.js
+    browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/spa.js
     activate server
     server-->>browser: the JavaScript file
     deactivate server
