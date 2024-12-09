@@ -4,9 +4,13 @@ const baseUrl = 'http://localhost:3001/persons'
 
 const getAll = () => {
     const request = axios.get(baseUrl)
-    return request.then(response => {
+    return request
+    .then(response => {
         console.log('response data', response.data)
         return response.data
+    })
+    .catch(error => {
+        console.log(error)
     })
   }
 
@@ -22,7 +26,8 @@ const deletePerson = person_id => {
 
 const updateNumber = (person_id, newNumber) => {
     console.log(`${baseUrl}/${person_id}`)
-    const request = axios.patch(`${baseUrl}/${person_id}`,
+    const request = axios
+    .patch(`${baseUrl}/${person_id}`,
         {
           number: newNumber
         }
