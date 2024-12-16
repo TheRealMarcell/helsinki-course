@@ -2,8 +2,8 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-  "title": "Why rod wave sucks ass",
+  "title": "Graduation Album Review",
   "author": "Marcellus Simanjuntak",
   "url": "x.com",
-  "likes": 4
+  "likes": 69
 }
