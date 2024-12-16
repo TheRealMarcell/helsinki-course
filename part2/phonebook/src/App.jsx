@@ -8,6 +8,7 @@ import personsService from './services/persons'
 
 const App = () => {
   const [persons, setPersons] = useState([])
+  const [filteredPersons, setFilteredPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newPhone, setNewPhone] = useState('')
   const [notification, setNotification] = useState(null)
@@ -18,6 +19,7 @@ const App = () => {
       .getAll()
       .then(response => {
         setPersons(response)
+        setFilteredPersons(response)
       })
   },[])
 
@@ -25,16 +27,15 @@ const App = () => {
 
   const replacePerson = (personName, personNumber) => {
     const person = persons.find((person) => person.name === personName)
-    const message = personsService
     .updateNumber(person.id, personNumber)
-    .then(response => {
+    .then(() => {
       setNotification(`${personName}'s phone number has been successfully changed!`)
       setNotifType(true)
       setTimeout(() => {
         setNotification(null)
       }, 5000)
     })
-    .catch(error => {
+    .catch(() => {
       setNotification(`Information of ${personName} has already been removed from server`)
       setNotifType(false)
       setTimeout(() => {
@@ -45,10 +46,20 @@ const App = () => {
   }
 
   const handleAddToPhonebook = (personObject) => {
-    setPersons(persons.concat(personObject)) // update personObject in frontend
-    personsService.create(personObject) // save personObject to backend
-    setNotification(`${personObject.name} has been added`)
-    setNotifType(true)
+    personsService
+      .create(personObject) // save personObject to backend
+      .then(() => {
+        setPersons(persons.concat(personObject)) // update personObject in frontend
+        setFilteredPersons(persons.concat(personObject))
+
+        setNotification(`${personObject.name} has been added`)
+        setNotifType(true)
+      })
+      .catch(error => {
+        setNotification(error.response.data.error)
+        setNotifType(false)
+      })
+    
     setTimeout(() => {
       setNotification(null)
     }, 5000)
@@ -80,18 +91,21 @@ const App = () => {
 
   const handleDeletePerson = (personId) => {
     personsService.deletePerson(personId)
-    .then(response =>
-      setPersons(persons.filter(person => person.id !== personId))
+    .then(() =>
+      {
+        setPersons(persons.filter(person => person.id !== personId))
+        setFilteredPersons(persons.filter(person => person.id !== personId))
+      }
     )
-    
-
 }
 
   const handleFilterChange = (event) => {
-    let personsCopy = [...persons]
-    const filtered_persons = personsCopy.filter((person) => person.name.toLowerCase().includes(event.target.value))
-    console.log('persons', persons)
-    setPersons(filtered_persons)
+    const filterKeyword = event.target.value
+    const filter = filteredPersons.filter((person) => person.name.toLowerCase().includes(filterKeyword))
+    event.target.value 
+    ? setFilteredPersons(filter)
+    : setFilteredPersons(persons)
+    
   }
 
   return (
@@ -102,7 +116,7 @@ const App = () => {
       <h3>add new person</h3>
       <PersonForm addPerson={addNewPerson} nameChange={handleNameChange} phoneChange={handlePhoneChange}/>
       <h3>Numbers</h3>
-      <Persons persons={persons} deletePerson={handleDeletePerson}/>
+      <Persons persons={filteredPersons} deletePerson={handleDeletePerson}/>
 
     </div>
   )
