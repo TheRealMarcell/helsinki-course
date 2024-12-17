@@ -10,8 +10,17 @@ blogsRouter.get('/', (request, response) => {
   })
 
 blogsRouter.post('/', (request, response) => {
-    const blog = new Blog(request.body)
-  
+    let blog = new Blog(request.body)
+    if(!request.body.title || !request.body.author){
+      return response.status(400).json({
+        error: 'content missing'
+      })
+    }
+
+    if(!request.body.likes){
+      request.body.likes = 0
+      blog = new Blog(request.body)
+    }
     blog
       .save()
       .then(result => {

@@ -2,8 +2,7 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-  "title": "Graduation Album Review",
+  "title": "Perfect Start",
   "author": "Marcellus Simanjuntak",
-  "url": "x.com",
-  "likes": 69
+  "url": "x.com"
 }
