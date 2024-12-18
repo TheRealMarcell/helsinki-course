@@ -99,6 +99,41 @@ test('check error if author not provided', async() => {
       .expect(400)
 })
 
+test('test deletion of post', async() => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToDelete = blogsAtStart[0]
+
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(204)
+    
+    const blogAtEnd = await helper.blogsInDb()
+
+    const titles = blogAtEnd.map(b => b.title)
+    assert(!titles.includes(blogToDelete.title))
+
+    assert.strictEqual(blogAtEnd.length, helper.initialBlogs.length - 1)
+})
+
+test('update information of post', async() => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToUpdate = blogsAtStart[0]
+
+    const updatedBlogPost = {
+        likes: 6917420
+    }
+
+    await api
+      .patch(`/api/blogs/${blogToUpdate.id}`)
+      .send(updatedBlogPost)
+      .expect(201)
+    
+    const blogsAtEnd = await helper.blogsInDb()
+    const titles = blogsAtEnd.map(b => b.likes)
+
+    assert(titles.includes(updatedBlogPost.likes))
+})
+
 after(async () => {
     await mongoose.connection.close()
 })
